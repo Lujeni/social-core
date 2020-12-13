@@ -10,7 +10,7 @@ from .oauth import BaseOAuth2
 class BattleNetOAuth2(BaseOAuth2):
     """ battle.net Oauth2 backend"""
     name = 'battlenet-oauth2'
-    ID_KEY = 'accountId'
+    ID_KEY = 'id'
     REDIRECT_STATE = False
     AUTHORIZATION_URL = 'https://eu.battle.net/oauth/authorize'
     ACCESS_TOKEN_URL = 'https://eu.battle.net/oauth/token'
@@ -40,11 +40,12 @@ class BattleNetOAuth2(BaseOAuth2):
 
     def get_user_details(self, response):
         """ Return user details from Battle.net account """
-        return {'battletag': response.get('battletag')}
+        return {'username': response.get('battletag')}
 
     def user_data(self, access_token, *args, **kwargs):
         """ Loads user data from service """
-        return self.get_json(
-            'https://eu.api.battle.net/account/user',
+        response = self.get_json(
+            'https://eu.battle.net/oauth/userinfo',
             params={'access_token': access_token}
         )
+        return response
